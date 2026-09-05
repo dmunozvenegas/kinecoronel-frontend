@@ -11,7 +11,7 @@ import axios from 'axios';
 // Si estás en local usa localhost, si estás en producción (build) usa tu dominio
 axios.defaults.baseURL = import.meta.env.MODE === 'development' 
     ? 'http://localhost:3000' 
-    : 'https://app.kinecoronel.cl';
+    : 'https://'https://kinecoronel-backend.onrender.com'';
 axios.defaults.withCredentials = true;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
