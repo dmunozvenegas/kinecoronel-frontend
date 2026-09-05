@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // 1. CONEXIÓN GLOBAL HACIA EL BACKEND REAL
 // Obliga a que cualquier petición de Axios apunte nativamente a tu VPS
-axios.defaults.baseURL = 'https://'https://kinecoronel-backend.onrender.com'';
+axios.defaults.baseURL = 'https://https://kinecoronel-backend.onrender.com';
 
 export const AuthContext = createContext();
 

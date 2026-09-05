@@ -231,12 +231,12 @@ export default function PacienteDetalle() {
                                         {/* 5. CORRECCIÓN: Enlaces a archivos fijos con protocolo HTTPS */}
                                         <div className="mt-3 flex flex-wrap gap-3 print:hidden">
                                             {orden.archivo_orden && (
-                                                <a href={import.meta.env.DEV ? `http://localhost:3000${orden.archivo_orden}` : `https://'https://kinecoronel-backend.onrender.com'${orden.archivo_orden}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-md hover:bg-green-100 font-semibold">
+                                                <a href={import.meta.env.DEV ? `http://localhost:3000${orden.archivo_orden}` : `https://https://kinecoronel-backend.onrender.com${orden.archivo_orden}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-md hover:bg-green-100 font-semibold">
                                                     <FileText size={13} /> Ver Orden Médica
                                                 </a>
                                             )}
                                             {orden.archivos_examenes && JSON.parse(orden.archivos_examenes).map((ruta, i) => (
-                                                <a href={import.meta.env.DEV ? `http://localhost:3000${ruta}` : `https://'https://kinecoronel-backend.onrender.com'${ruta}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-md hover:bg-blue-100 font-semibold">
+                                                <a href={import.meta.env.DEV ? `http://localhost:3000${ruta}` : `https://https://kinecoronel-backend.onrender.com${ruta}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-md hover:bg-blue-100 font-semibold">
                                                     <Paperclip size={13} /> Examen #{i+1}
                                                 </a>
                                             ))}

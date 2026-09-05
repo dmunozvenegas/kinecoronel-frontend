@@ -19,7 +19,7 @@ export default function PacienteEdit() {
     const [cargando, setCargando] = useState(true);
     
     useEffect(() => {
-        // 1. Usamos la ruta relativa (Axios ya sabe que va hacia https://'https://kinecoronel-backend.onrender.com')
+        // 1. Usamos la ruta relativa (Axios ya sabe que va hacia https://https://kinecoronel-backend.onrender.com)
         axios.get(`/api/pacientes/${id}`)
             .then(res => {
                 const p = res.data;
