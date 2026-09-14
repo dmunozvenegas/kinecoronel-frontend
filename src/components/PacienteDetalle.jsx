@@ -334,41 +334,40 @@ function SesionesList({ ordenId, pacienteId, actualizarDatos, onEditar }) {
 
     return (
         <div className="space-y-3 print:space-y-2">
-            {sesiones.map(s => {
+            {sesiones.map((s, index) => {
+                // 1. Calculamos el número de sesión real (la más nueva arriba tendrá el número mayor)
+                const numeroSesion = sesiones.length - index; 
+
                 let terapiasArray = [];
                 if (s.terapias) {
                     try { terapiasArray = JSON.parse(s.terapias); } catch(e){}
                 }
 
                 return (
-                    <div key={s.id} className="bg-white p-4 rounded-xl border border-gray-200 shadow-2xs hover:border-blue-200 transition-colors print:border-none print:border-l-2 print:border-blue-600 print:p-2 print:rounded-none print:shadow-none">
+                    <div key={s.id} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:border-blue-200 transition-colors print:border-none print:border-l-2 print:border-blue-600 print:p-2 print:rounded-none print:shadow-none">
                         <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-50 print:mb-1 print:pb-1">
                             
                             {/* Insignia de Sesión y Fecha */}
                             <div className="flex items-center gap-2">
+                                {/* 2. Reemplazamos s.id por numeroSesion */}
                                 <span className="text-xs font-black bg-blue-600 text-white px-2 py-0.5 rounded print:bg-transparent print:text-blue-800 print:px-0 print:text-[10px]">
-                                    Sesión #{s.id}
+                                    Sesión #{numeroSesion}
                                 </span>
                                 <span className="text-xs text-gray-400 font-medium print:text-[10px]">
                                     {new Date(s.fecha).toLocaleDateString('es-CL', { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                             </div>
 
-                            {/* ========================================================= */}
-                            {/* BOTONES DE ACCIÓN VISUALES (Ocultos al imprimir en PDF) */}
-                            {/* ========================================================= */}
+                            {/* BOTONES DE ACCIÓN VISUALES */}
                             <div className="flex items-center gap-2 print:hidden">
-                                
-                                {/* 1. BOTÓN INFORME: Enruta exactamente a la vista de impresión dinámica */}
                                 <Link 
                                     to={`/informe/paciente/${pacienteId}/orden/${ordenId}/sesion/${s.id}`}
-                                    className="inline-flex items-center gap-1 text-xs font-bold text-gray-700 hover:text-blue-700 bg-gray-100 hover:bg-blue-50 border border-gray-200 hover:border-blue-200 px-2.5 py-1 rounded-md transition-colors shadow-2xs"
-                                    title="Visualizar documento imprimible de esta sesión"
+                                    className="inline-flex items-center gap-1 text-xs font-bold text-gray-700 hover:text-blue-700 bg-gray-100 hover:bg-blue-50 border border-gray-200 hover:border-blue-200 px-2.5 py-1 rounded-md transition-colors shadow-sm"
+                                    title="Visualizar documento imprimible"
                                 >
                                     📄 <span className="hidden sm:inline">Informe</span>
                                 </Link>
 
-                                {/* 2. BOTÓN EDITAR: Dispara la apertura del modal con la data actual */}
                                 <button 
                                     onClick={() => onEditar(s)} 
                                     className="text-gray-400 hover:text-yellow-600 p-1.5 rounded-md hover:bg-yellow-50 transition-colors border border-transparent hover:border-yellow-200" 
@@ -377,8 +376,6 @@ function SesionesList({ ordenId, pacienteId, actualizarDatos, onEditar }) {
                                     ✏️
                                 </button>
                             </div>
-                            {/* ========================================================= */}
-
                         </div>
 
                         {/* Etiquetas de Terapias Aplicadas */}
