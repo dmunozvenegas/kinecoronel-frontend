@@ -1,9 +1,9 @@
 import { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-// 1. CONEXIÓN GLOBAL HACIA EL BACKEND REAL
-// Obliga a que cualquier petición de Axios apunte nativamente a tu VPS
-axios.defaults.baseURL = 'https://kinecoronel-backend.onrender.com';
+// 1. CONEXIÓN DINÁMICA AL BACKEND
+// Lee la URL desde el archivo .env (tu Docker en localhost:3000)
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const AuthContext = createContext();
 

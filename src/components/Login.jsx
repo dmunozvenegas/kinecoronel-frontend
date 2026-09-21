@@ -2,12 +2,14 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { Mail, Lock, CheckCircle } from 'lucide-react';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [cargando, setCargando] = useState(false);
+    const [exito, setExito] = useState(false); // <-- NUEVO ESTADO
     
     // Estado para controlar el giro 3D
     const [isFlipped, setIsFlipped] = useState(false);
@@ -22,10 +24,19 @@ export default function Login() {
         
         try {
             const respuesta = await axios.post('/api/auth/login', { email, password });
+            
+            console.log("Datos del backend:", respuesta.data); 
+            
             const { usuario, token } = respuesta.data;
             
             login(usuario, token);
-            navigate('/pacientes'); 
+            // ACTIVAMOS EL EFECTO VISUAL DE ÉXITO
+            setExito(true);
+            
+            // ESPERAMOS 1.5 SEGUNDOS ANTES DE CAMBIAR DE PÁGINA
+            setTimeout(() => {
+                navigate('/pacientes'); 
+            }, 1500); 
             
         } catch (err) {
             console.error("Error en login:", err);
@@ -55,7 +66,22 @@ export default function Login() {
                 {/* ========================================== */}
                 {/* CARA FRONTAL: LOGIN (Tu código original)   */}
                 {/* ========================================== */}
-<div className="w-full bg-white p-8 rounded-2xl shadow-lg border border-gray-100 [-webkit-backface-visibility:hidden] [backface-visibility:hidden] relative">                    
+                <div className="w-full bg-white p-8 rounded-2xl shadow-lg border border-gray-100 [-webkit-backface-visibility:hidden] [backface-visibility:hidden] relative">                    
+                    {/* ========================================================= */}
+                    {/* EFECTO DE ÉXITO (Se superpone al form cuando es correcto) */}
+                    {/* ========================================================= */}
+                    <div className={`absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm rounded-2xl transition-all duration-500 ${exito ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+                        <div className={`w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4 transition-transform duration-500 delay-100 ${exito ? 'scale-100' : 'scale-0'}`}>
+                            <CheckCircle size={40} />
+                        </div>
+                        <h3 className={`text-xl font-bold text-gray-800 transition-all duration-500 delay-200 ${exito ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+                            ¡Bienvenido!
+                        </h3>
+                        <p className={`text-sm text-gray-500 mt-2 transition-all duration-500 delay-300 ${exito ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+                            Preparando tu panel...
+                        </p>
+                    </div>
+                    {/* ========================================================= */}
                     <div className="text-center mb-8">
                         <img 
                             src="/logo/logo-original.jpg" 
@@ -124,7 +150,9 @@ export default function Login() {
                 {/* ========================================== */}
                 {/* CARA TRASERA: RECUPERAR CONTRASEÑA         */}
                 {/* ========================================== */}
-<div className="absolute top-0 left-0 w-full h-full bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col justify-center [-webkit-backface-visibility:hidden] [backface-visibility:hidden] [transform:rotateY(180deg)]">                    
+                {/* CARA TRASERA: RECUPERAR CONTRASEÑA         */}
+                {/* ========================================== */}
+                <div className="absolute top-0 left-0 w-full h-full bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col justify-center [-webkit-backface-visibility:hidden] [backface-visibility:hidden] [transform:rotateY(180deg)]">     
                     <div className="text-center mb-6">
                         <div className="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                             <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

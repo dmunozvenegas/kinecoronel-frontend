@@ -1,109 +1,55 @@
-import { Routes, Route, Navigate, Link } from 'react-router-dom'
-import { useContext } from 'react'
-import { AuthContext } from './context/AuthContext'
+import { Routes, Route } from 'react-router-dom';
+import MainLayout from './components/Layout/MainLayout';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
 
-import Login from './components/Login'
-import PacientesList from './components/PacientesList'
-import PacienteDetalle from './components/PacienteDetalle'
-import PacienteEdit from './components/PacienteEdit'
-import OrdenForm from './components/OrdenForm'
-import InformeSesion from './components/InformeSesion'
-import PacienteForm from './components/PacienteForm' 
-import BonoScanner from './components/BonoScanner';
+// 1. IMPORTANTE: Importaciones de Pacientes
+import PacientesList from './components/PacientesList';
+import PacienteForm from './components/PacienteForm';
+import PacienteDetalle from './components/PacienteDetalle';
+import PacienteEdit from './components/PacienteEdit';
+
+// 2. IMPORTANTE: Importaciones de Órdenes y Sesiones
+import OrdenForm from './components/OrdenForm';
+import InformeSesion from './components/InformeSesion';
+
+// 3. Importaciones de Bonos
 import ListaBonos from './components/ListaBonos';
+import BonoScanner from './components/BonoScanner';
 
-function App() {
-  const { usuario, cargando, logout } = useContext(AuthContext)
-
-  if (cargando) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <p className="text-gray-600 font-semibold">Cargando sistema KineCoronel...</p>
-      </div>
-    )
-  }
-
-  if (!usuario) {
-    return (
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    )
-  }
-
+export default function App() {
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      
-      {/* ================= TU BANNER ORIGINAL RESTAURADO ================= */}
-      <header className="max-w-6xl mx-auto mb-8 bg-white px-6 py-4 rounded-lg shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-          <Link to="/pacientes" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <img 
-                src="/logo/logo-original.jpg" 
-                alt="Logo KineCoronel" 
-                className="h-10 sm:h-12 w-auto object-contain"
-                onError={(e) => e.target.style.display = 'none'} 
-            />
-          </Link>
-          
-          <span className="text-xs font-semibold text-gray-500 sm:border-l sm:pl-4 mt-2 sm:mt-0">
-            Kinesióloga: {usuario.nombre}
-          </span>
-        </div>
+    <Routes>
+      {/* ========================================== */}
+      {/* RUTAS SIN MENÚ LATERAL (Públicas e Impresión)*/}
+      {/* ========================================== */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/informe/paciente/:pacienteId/orden/:ordenId/sesion/:sesionId" element={<InformeSesion />} />
+
+      {/* ========================================== */}
+      {/* RUTAS CON MENÚ LATERAL (Sistema Principal)   */}
+      {/* ========================================== */}
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Dashboard />} />
         
-        <nav className="flex flex-wrap items-center justify-center gap-3">
-          
-          {/* 🟢 NUEVO BOTÓN: Acceso rápido a Bonos */}
-          <Link 
-            to="/bonos" 
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-semibold transition-colors shadow-sm text-sm flex items-center gap-2"
-          >
-            📋 Ver Bonos Fonasa
-          </Link>
+        {/* Flujo de Pacientes */}
+        <Route path="/pacientes" element={<PacientesList />} />
+        <Route path="/pacientes/nuevo" element={<PacienteForm />} />
+        <Route path="/pacientes/:id" element={<PacienteDetalle />} />
+        <Route path="/pacientes/editar/:id" element={<PacienteEdit />} />
 
-          {/* 🔵 BOTÓN EXISTENTE: Nuevo Paciente */}
-          <Link 
-            to="/nuevo-paciente" 
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold transition-colors shadow-sm text-sm"
-          >
-            + Nuevo Paciente
-          </Link>
+        {/* Flujo de Órdenes (AQUÍ ESTÁN LAS RUTAS DE OrdenForm) */} 
+        <Route path="/pacientes/:id/nueva-orden" element={<OrdenForm />} />
+        <Route path="/pacientes/:id/editar-orden/:ordenId" element={<OrdenForm />} /> 
 
-          {/* 🔴 BOTÓN EXISTENTE: Cerrar Sesión */}
-          <button 
-            onClick={logout}
-            className="text-xs font-bold text-red-600 border border-red-200 bg-red-50 hover:bg-red-100 px-3 py-2 rounded-lg transition-colors ml-2"
-          >
-            Cerrar Sesión
-          </button>
-        </nav>
-      </header>
-      {/* ================================================================= */}
-      
-      <main className="max-w-6xl mx-auto">
-        <Routes>
-          <Route path="/" element={<Navigate to="/pacientes" />} />
-          
-          <Route path="/pacientes" element={<PacientesList />} />
-          <Route path="/nuevo-paciente" element={<PacienteForm />} />
-          <Route path="/pacientes/:id" element={<PacienteDetalle />} />
-          <Route path="/pacientes/editar/:id" element={<PacienteEdit />} />
-          <Route path="/pacientes/:id/nueva-orden" element={<OrdenForm />} />
-          <Route path="/pacientes/:id/editar-orden/:ordenId" element={<OrdenForm />} />
-          <Route path="/informes/nuevo" element={<InformeSesion />} />         
-          <Route path="/informe/paciente/:pacienteId/orden/:ordenId/sesion/:sesionId" element={<InformeSesion />} />
-          
-          {/* Rutas de Inteligencia Artificial y Bonos */}
-          <Route path="/escanear-bono" element={<BonoScanner />} />
-          <Route path="/bonos" element={<ListaBonos />} />
+        {/* Flujo de Bonos */}
+        <Route path="/bonos" element={<ListaBonos />} />
+        <Route path="/bonos/escanear" element={<BonoScanner />} />
 
-          <Route path="*" element={<Navigate to="/pacientes" />} />
-        </Routes>
-      </main>
-
-    </div>
-  )
+        {/* Módulos en construcción */}
+        <Route path="/agenda" element={<div className="p-4 text-gray-500">Módulo de Agenda en construcción</div>} />
+        <Route path="/reportes" element={<div className="p-4 text-gray-500">Módulo de Reportes en construcción</div>} />
+      </Route>
+    </Routes>
+  );
 }
-
-export default App
