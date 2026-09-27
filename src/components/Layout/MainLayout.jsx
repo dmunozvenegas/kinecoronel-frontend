@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, ClipboardList, Calendar, TrendingUp, Settings, LogOut, Menu, X, Receipt } from 'lucide-react';
-
+import { LayoutDashboard, Users, ClipboardList, Calendar, TrendingUp, Settings, Receipt ,LogOut, Menu, X, ShoppingCart, Package } from 'lucide-react';
 export default function MainLayout() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -34,6 +33,9 @@ export default function MainLayout() {
         { path: '/agenda', icon: <Calendar size={20} />, label: 'Agenda' },
         { path: '/reportes', icon: <TrendingUp size={20} />, label: 'Reportes' },
         { path: '/bonos', icon: <Receipt size={20} />, label: 'Carga de Bonos' },
+        { path: '/tienda', icon: <ShoppingCart size={20} />, label: 'Tienda Botikine' },
+        { path: '/inventario', icon: <Package size={20} />, label: 'Inventario Botikine' },
+        
     ];
 
     return (
@@ -97,6 +99,7 @@ export default function MainLayout() {
                                 {item.icon}
                                 {item.label}
                             </Link>
+                            
                         );
                     })}
                 </nav>

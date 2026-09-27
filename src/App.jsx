@@ -17,6 +17,9 @@ import InformeSesion from './components/InformeSesion';
 import ListaBonos from './components/ListaBonos';
 import BonoScanner from './components/BonoScanner';
 
+import BotiKine from './components/BotiKine';
+import InventarioBotikine from "./components/InventarioBotikine";
+
 export default function App() {
   return (
     <Routes>
@@ -49,6 +52,9 @@ export default function App() {
         {/* Módulos en construcción */}
         <Route path="/agenda" element={<div className="p-4 text-gray-500">Módulo de Agenda en construcción</div>} />
         <Route path="/reportes" element={<div className="p-4 text-gray-500">Módulo de Reportes en construcción</div>} />
+
+        <Route path="/tienda" element={<BotiKine />} />
+        <Route path="/inventario" element={<InventarioBotikine />} />
       </Route>
     </Routes>
   );
