@@ -4,8 +4,8 @@ import axios from 'axios';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css'; 
 import { 
-    Edit2, Plus, X, FileText, Paperclip, Printer, 
-    User, Phone, Mail, MapPin, Calendar, Activity, ArrowLeft, Clock, CheckCircle2 
+    Edit2, Plus, X, FileText, Paperclip, Printer, Trash2,
+    User, Calendar, Activity, ArrowLeft, Clock, CheckCircle2 
 } from 'lucide-react';
 
 const TERAPIAS_OPCIONES = ["Crioterapia", "Masoterapia", "TENS", "US", "Hidroterapia"];
@@ -120,6 +120,44 @@ export default function PacienteDetalle() {
             console.error(error);
             alert("Error al guardar la sesión");
             setGuardandoSesion(false);
+        }
+    };
+
+    const handleEliminarSesion = async (sesionId) => {
+        // 1. Notificación nativa de confirmación para evitar borrados accidentales
+        const confirmar = window.confirm("¿Estás seguro de que deseas eliminar esta evolución? Esta acción no se puede deshacer y ajustará el progreso de la orden.");
+        
+        if (!confirmar) return;
+
+        try {
+            // 2. Ejecutar el borrado en el backend
+            await axios.delete(`/api/ordenes/sesion/${sesionId}`);
+            
+            // 3. Actualizar la interfaz instantáneamente sin recargar la página
+            setSesiones(sesiones.filter(sesion => sesion.id !== sesionId));
+            
+            // (Opcional) Si tienes una función para recargar la orden y actualizar la barra de progreso, llámala aquí:
+            // cargarOrdenMedica(); 
+            
+        } catch (error) {
+            console.error("Error al eliminar la evolución:", error);
+            alert("Hubo un problema al intentar eliminar la evolución.");
+        }
+    };
+
+    const handleEliminarOrden = async (ordenId) => {
+        // Advertencia más fuerte porque esto borra PDFs y todo el historial
+        const confirmar = window.confirm("⚠️️ ADVERTENCIA: ¿Estás seguro de que deseas eliminar esta ORDEN MÉDICA por completo?\n\nSe borrarán permanentemente sus PDFs adjuntos y todo el historial de evoluciones asociado. Esta acción no se puede deshacer.");
+
+        if (!confirmar) return;
+
+        try {
+            await axios.delete(`/api/ordenes/${ordenId}`);
+            // Recarga toda la pantalla mágicamente
+            setActualizarDatos(prev => prev + 1); 
+        } catch (error) {
+            console.error("Error al eliminar la orden:", error);
+            alert("Hubo un problema al intentar eliminar la orden médica.");
         }
     };
 
@@ -248,10 +286,20 @@ export default function PacienteDetalle() {
                                                 </h3>
                                                 <p className="text-sm text-gray-600 font-medium mt-1">Dr. Derivante: {orden.medico_derivante || 'No especificado'}</p>
                                             </div>
+                                            {/* CONTENEDOR DE BOTONES DE LA ORDEN */}
                                             <div className="flex items-center gap-2 print:hidden">
                                                 <Link to={`/pacientes/${id}/editar-orden/${orden.id}`} className="p-2 text-gray-400 hover:text-blue-600 bg-white border border-gray-200 rounded-lg shadow-sm transition-colors" title="Editar Orden">
                                                     <Edit2 size={16} />
                                                 </Link>
+                                                
+                                                {/* 👇 NUEVO BOTÓN PARA ELIMINAR LA ORDEN COMPLETA */}
+                                                <button 
+                                                    onClick={() => handleEliminarOrden(orden.id)} 
+                                                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 bg-white border border-gray-200 hover:border-red-200 rounded-lg shadow-sm transition-colors" 
+                                                    title="Eliminar Orden y Archivos"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
                                             </div>
                                         </div>
 
@@ -301,7 +349,8 @@ export default function PacienteDetalle() {
                                             ordenId={orden.id} 
                                             pacienteId={id}
                                             actualizarDatos={actualizarDatos}
-                                            onEditar={(sesion) => abrirModalEditarSesion(sesion, orden.id)} 
+                                            onEditar={(sesion) => abrirModalEditarSesion(sesion, orden.id)}
+                                            onEliminar={handleEliminarSesion} 
                                         />
                                     </div>
                                 </div>
@@ -379,7 +428,7 @@ export default function PacienteDetalle() {
     );
 }
 
-function SesionesList({ ordenId, pacienteId, actualizarDatos, onEditar }) {
+function SesionesList({ ordenId, pacienteId, actualizarDatos, onEditar, onEliminar }) {
     const [sesiones, setSesiones] = useState([]);
 
     useEffect(() => {
@@ -434,6 +483,15 @@ function SesionesList({ ordenId, pacienteId, actualizarDatos, onEditar }) {
                                         className="text-gray-400 hover:text-blue-600 p-1.5 border border-transparent hover:border-gray-200 hover:bg-gray-50 rounded-lg transition-colors" 
                                     >
                                         <Edit2 size={16} />
+                                    </button>
+
+                                    {/* 👇 NUEVO BOTÓN DE ELIMINAR */}
+                                    <button 
+                                        onClick={() => onEliminar(s.id)}
+                                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        title="Eliminar evolución"
+                                    >
+                                        <Trash2 size={16} />
                                     </button>
                                 </div>
                             </div>
