@@ -123,22 +123,17 @@ export default function PacienteDetalle() {
         }
     };
 
+    // ==========================================
+    // NUEVAS FUNCIONES DE ELIMINACIÓN
+    // ==========================================
+
     const handleEliminarSesion = async (sesionId) => {
-        // 1. Notificación nativa de confirmación para evitar borrados accidentales
         const confirmar = window.confirm("¿Estás seguro de que deseas eliminar esta evolución? Esta acción no se puede deshacer y ajustará el progreso de la orden.");
-        
         if (!confirmar) return;
 
         try {
-            // 2. Ejecutar el borrado en el backend
             await axios.delete(`/api/ordenes/sesion/${sesionId}`);
-            
-            // 3. Actualizar la interfaz instantáneamente sin recargar la página
-            setSesiones(sesiones.filter(sesion => sesion.id !== sesionId));
-            
-            // (Opcional) Si tienes una función para recargar la orden y actualizar la barra de progreso, llámala aquí:
-            // cargarOrdenMedica(); 
-            
+            setActualizarDatos(prev => prev + 1);
         } catch (error) {
             console.error("Error al eliminar la evolución:", error);
             alert("Hubo un problema al intentar eliminar la evolución.");
@@ -146,14 +141,11 @@ export default function PacienteDetalle() {
     };
 
     const handleEliminarOrden = async (ordenId) => {
-        // Advertencia más fuerte porque esto borra PDFs y todo el historial
-        const confirmar = window.confirm("⚠️️ ADVERTENCIA: ¿Estás seguro de que deseas eliminar esta ORDEN MÉDICA por completo?\n\nSe borrarán permanentemente sus PDFs adjuntos y todo el historial de evoluciones asociado. Esta acción no se puede deshacer.");
-
+        const confirmar = window.confirm("⚠ ADVERTENCIA: ¿Estás seguro de que deseas eliminar esta ORDEN MÉDICA por completo?\n\nSe borrarán permanentemente sus PDFs adjuntos y todo el historial de evoluciones asociado. Esta acción no se puede deshacer.");
         if (!confirmar) return;
 
         try {
             await axios.delete(`/api/ordenes/${ordenId}`);
-            // Recarga toda la pantalla mágicamente
             setActualizarDatos(prev => prev + 1); 
         } catch (error) {
             console.error("Error al eliminar la orden:", error);
@@ -167,16 +159,12 @@ export default function PacienteDetalle() {
     if (!paciente) return <h2 className="text-xl text-center mt-10 text-red-600">Paciente no encontrado.</h2>;
 
     return (
-        /* Agregado print:pb-40 para que el contenido no quede tapado por el pie de página legal */
         <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 print:p-0 print:space-y-4 print:max-w-full print:pb-40 relative">
             
-            {/* ========================================================= */}
-            {/* NUEVO MEMBRETE OFICIAL ELEGANTE (Solo visible al imprimir)*/}
-            {/* ========================================================= */}
+            {/* MEMBRETE IMPRESIÓN */}
             <div className="hidden print:flex justify-between items-center border-b-[3px] border-blue-900 pb-4 mb-6">
                 <div className="flex items-center gap-5">
                     <img src="/logo/logo-original.jpg" alt="Logo KineCoronel" className="h-16 w-auto object-contain" />
-                     
                 </div>
                 <div className="text-right">
                     <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Historial Clínico Oficial</p>
@@ -184,7 +172,6 @@ export default function PacienteDetalle() {
                     <p className="text-[11px] text-gray-600 font-medium">Fecha: {new Date().toLocaleDateString('es-CL')}</p>
                 </div>
             </div>
-            {/* ========================================================= */}
 
             {/* BOTÓN VOLVER Y ACCIONES */}
             <div className="flex justify-between items-center mb-2 print:hidden">
@@ -202,7 +189,7 @@ export default function PacienteDetalle() {
                 </button>
             </div>
 
-            {/* CABECERA DEL PACIENTE (Diseño de Tarjeta) */}
+            {/* CABECERA DEL PACIENTE */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden print:shadow-none print:border-gray-300 print:p-4 print:border-2 print:rounded-xl print:bg-gray-50">
                 <div className="absolute top-0 left-0 w-2 h-full bg-blue-500 print:hidden"></div>
                 
@@ -286,13 +273,11 @@ export default function PacienteDetalle() {
                                                 </h3>
                                                 <p className="text-sm text-gray-600 font-medium mt-1">Dr. Derivante: {orden.medico_derivante || 'No especificado'}</p>
                                             </div>
-                                            {/* CONTENEDOR DE BOTONES DE LA ORDEN */}
                                             <div className="flex items-center gap-2 print:hidden">
                                                 <Link to={`/pacientes/${id}/editar-orden/${orden.id}`} className="p-2 text-gray-400 hover:text-blue-600 bg-white border border-gray-200 rounded-lg shadow-sm transition-colors" title="Editar Orden">
                                                     <Edit2 size={16} />
                                                 </Link>
-                                                
-                                                {/* 👇 NUEVO BOTÓN PARA ELIMINAR LA ORDEN COMPLETA */}
+                                                {/* BOTÓN ELIMINAR ORDEN */}
                                                 <button 
                                                     onClick={() => handleEliminarOrden(orden.id)} 
                                                     className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 bg-white border border-gray-200 hover:border-red-200 rounded-lg shadow-sm transition-colors" 
@@ -349,7 +334,7 @@ export default function PacienteDetalle() {
                                             ordenId={orden.id} 
                                             pacienteId={id}
                                             actualizarDatos={actualizarDatos}
-                                            onEditar={(sesion) => abrirModalEditarSesion(sesion, orden.id)}
+                                            onEditar={(sesion) => abrirModalEditarSesion(sesion, orden.id)} 
                                             onEliminar={handleEliminarSesion} 
                                         />
                                     </div>
@@ -360,9 +345,7 @@ export default function PacienteDetalle() {
                 </div>
             </div>
 
-            {/* ========================================================= */}
-            {/* NUEVO PIE DE PÁGINA LEGAL FIJO (Solo visible al imprimir) */}
-            {/* ========================================================= */}
+            {/* PIE DE PÁGINA IMPRESIÓN */}
             <div className="hidden print:flex fixed bottom-0 left-0 w-full pt-4 pb-4 border-t border-gray-400 flex-col items-center justify-center bg-white z-50">
                 <div className="w-64 border-t-2 border-gray-800 mt-6 mb-2"></div>
                 <p className="text-[12px] font-bold text-gray-800 uppercase">Firma y Timbre Profesional Tratante</p>
@@ -372,7 +355,6 @@ export default function PacienteDetalle() {
                     Queda estrictamente prohibida su reproducción, divulgación o alteración no autorizada. Documento generado a través de Plataforma KineCoronel.
                 </p>
             </div>
-            {/* ========================================================= */}
 
             {/* MODAL DE EVOLUCIÓN */}
             {modalAbierto && (
@@ -484,8 +466,7 @@ function SesionesList({ ordenId, pacienteId, actualizarDatos, onEditar, onElimin
                                     >
                                         <Edit2 size={16} />
                                     </button>
-
-                                    {/* 👇 NUEVO BOTÓN DE ELIMINAR */}
+                                    {/* BOTÓN ELIMINAR SESIÓN */}
                                     <button 
                                         onClick={() => onEliminar(s.id)}
                                         className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
