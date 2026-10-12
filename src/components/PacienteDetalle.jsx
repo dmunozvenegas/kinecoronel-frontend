@@ -8,7 +8,7 @@ import {
     User, Calendar, Activity, ArrowLeft, Clock, CheckCircle2 
 } from 'lucide-react';
 
-const TERAPIAS_OPCIONES = ["Crioterapia", "Masoterapia", "TENS", "US", "Hidroterapia"];
+const TERAPIAS_OPCIONES = ["Crioterapia", "Masoterapia", "TENS", "US", "Hidroterapia", "Ejercicios Terapeuticos", "Estiramientos", "Movilización Articular", "Vendaje Neuromuscular"];
 
 export default function PacienteDetalle() {
     const { id } = useParams();

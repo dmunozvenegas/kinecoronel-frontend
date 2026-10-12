@@ -20,6 +20,9 @@ import BonoScanner from './components/BonoScanner';
 import BotiKine from './components/BotiKine';
 import InventarioBotikine from "./components/InventarioBotikine";
 
+// 4. Agenda (Calendario)
+import Agenda from './components/Agenda';
+
 export default function App() {
   return (
     <Routes>
@@ -49,8 +52,10 @@ export default function App() {
         <Route path="/bonos" element={<ListaBonos />} />
         <Route path="/bonos/escanear" element={<BonoScanner />} />
 
+        {/* Módulo de Agenda */}
+        <Route path="/agenda" element={<Agenda />} />
+
         {/* Módulos en construcción */}
-        <Route path="/agenda" element={<div className="p-4 text-gray-500">Módulo de Agenda en construcción</div>} />
         <Route path="/reportes" element={<div className="p-4 text-gray-500">Módulo de Reportes en construcción</div>} />
 
         <Route path="/tienda" element={<BotiKine />} />
