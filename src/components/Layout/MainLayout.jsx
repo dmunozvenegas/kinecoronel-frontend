@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, ClipboardList, Calendar, TrendingUp, Settings, Receipt ,LogOut, Menu, X, ShoppingCart, Package } from 'lucide-react';
+import { LayoutDashboard, Users, ClipboardList, Calendar, TrendingUp, Settings, Receipt ,LogOut, Menu, X, ShoppingCart, Package, Network } from 'lucide-react';
+import { Gift } from 'lucide-react'; // Súmalo a los íconos que ya importas ahí
+
 export default function MainLayout() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -31,10 +33,12 @@ export default function MainLayout() {
         { path: '/pacientes', icon: <Users size={20} />, label: 'Pacientes' },
         { path: '/ordenes', icon: <ClipboardList size={20} />, label: 'Órdenes Clínicas' },
         { path: '/agenda', icon: <Calendar size={20} />, label: 'Agenda' },
+        { path: '/red-medica', icon: <Network size={20} />, label: 'Red Médica' },
         { path: '/reportes', icon: <TrendingUp size={20} />, label: 'Reportes' },
         { path: '/bonos', icon: <Receipt size={20} />, label: 'Carga de Bonos' },
         { path: '/tienda', icon: <ShoppingCart size={20} />, label: 'Tienda Botikine' },
         { path: '/inventario', icon: <Package size={20} />, label: 'Inventario Botikine' },
+        { path: '/crm-feria', icon: <Gift size={20} /> ,label: 'CRM Feria & Ruleta'}, 
         
     ];
 

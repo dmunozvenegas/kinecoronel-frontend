@@ -23,6 +23,13 @@ import InventarioBotikine from "./components/InventarioBotikine";
 // 4. Agenda (Calendario)
 import Agenda from './components/Agenda';
 
+// 5. Red Médica (Directorio de médicos derivantes)
+import Medicos from './components/Medicos';
+
+import RuletaFeria from './components/RuletaFeria';
+import CrmFeria from './components/CrmFeria';
+
+
 export default function App() {
   return (
     <Routes>
@@ -31,7 +38,7 @@ export default function App() {
       {/* ========================================== */}
       <Route path="/login" element={<Login />} />
       <Route path="/informe/paciente/:pacienteId/orden/:ordenId/sesion/:sesionId" element={<InformeSesion />} />
-
+      <Route path="/feria" element={<RuletaFeria />} />
       {/* ========================================== */}
       {/* RUTAS CON MENÚ LATERAL (Sistema Principal)   */}
       {/* ========================================== */}
@@ -55,11 +62,16 @@ export default function App() {
         {/* Módulo de Agenda */}
         <Route path="/agenda" element={<Agenda />} />
 
+        {/* Módulo de Red Médica */}
+        <Route path="/red-medica" element={<Medicos />} />
+
         {/* Módulos en construcción */}
         <Route path="/reportes" element={<div className="p-4 text-gray-500">Módulo de Reportes en construcción</div>} />
 
         <Route path="/tienda" element={<BotiKine />} />
         <Route path="/inventario" element={<InventarioBotikine />} />
+ 
+        <Route path="/crm-feria" element={<CrmFeria />} />
       </Route>
     </Routes>
   );
