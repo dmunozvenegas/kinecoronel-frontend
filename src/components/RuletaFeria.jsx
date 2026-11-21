@@ -4,7 +4,7 @@ import { Sparkles, ShieldCheck, CheckCircle2, Copy, Check, MessageCircle, Volume
 
 const RAW_API = import.meta.env.VITE_API_URL || 'https://kinecoronel-backend.onrender.com';
 const API_BASE = RAW_API.replace(/\/api\/?$/, '');
-const WHATSAPP_CENTRO = '56900000000'; // <-- Reemplaza por el WhatsApp real de KineCoronel (sin +)
+const WHATSAPP_CENTRO = '56973764805'; // <-- Reemplaza por el WhatsApp real de KineCoronel (sin +)
 
 const DOLENCIAS = [
   'Dolor de Espalda / Lumbar',
@@ -33,6 +33,26 @@ const crearArcoTajada = (cx, cy, r, startAngle, endAngle) => {
   return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y} Z`;
 };
 
+// Formatea automáticamente a "+56 9 XXXX XXXX" y protege el prefijo
+const formatearTelefonoCL = (valor = '') => {
+  let soloDigitos = valor.replace(/\D/g, '');
+
+  // Si el navegador autocompleta con 569... quitamos el prefijo para no duplicarlo
+  if (soloDigitos.startsWith('569')) {
+    soloDigitos = soloDigitos.slice(3);
+  } else if (soloDigitos.startsWith('56')) {
+    soloDigitos = soloDigitos.slice(2);
+  } else if (soloDigitos.startsWith('9') && soloDigitos.length === 9) {
+    soloDigitos = soloDigitos.slice(1);
+  }
+
+  // Máximo 8 dígitos después del +56 9
+  const resto = soloDigitos.slice(0, 8);
+
+  if (resto.length === 0) return '+56 9 ';
+  if (resto.length <= 4) return `+56 9 ${resto}`;
+  return `+56 9 ${resto.slice(0, 4)} ${resto.slice(4)}`;
+};
 // Ajusta cualquier texto en 1, 2 o 3 líneas cortas (máx 11 letras por línea) para calzar dentro del cono
 const dividirEtiqueta = (texto = '') => {
   const limpio = texto.trim().toUpperCase().replace(/\s+/g, ' ');
@@ -75,7 +95,7 @@ export default function RuletaFeria() {
 
   const [form, setForm] = useState({
     nombre: '',
-    telefono: '+569',
+    telefono: '+56 9 ',
     dolencia: '',
     prevision: 'Fonasa'
   });
@@ -170,8 +190,8 @@ export default function RuletaFeria() {
       return;
     }
     const digitos = form.telefono.replace(/\D/g, '');
-    if (digitos.length < 11) {
-      setError('Ingresa tu WhatsApp completo (ej: +56912345678).');
+    if (digitos.length !== 11) {
+      setError('Ingresa los 8 dígitos de tu celular (ej: +56 9 1234 5678).');
       return;
     }
 
@@ -258,7 +278,11 @@ export default function RuletaFeria() {
     animRef.current = requestAnimationFrame(loopEspera);
 
     try {
-      const res = await axios.post(`${API_BASE}/api/feria/girar`, form);
+      const payload = {
+        ...form,
+        telefono: `+${form.telefono.replace(/\D/g, '')}`
+      };
+      const res = await axios.post(`${API_BASE}/api/feria/girar`, payload);
       respuestaBackend = res.data;
     } catch (err) {
       errorBackend = err.response?.data?.error || 'Ocurrió un problema de señal al girar. Intenta otra vez.';
@@ -380,11 +404,19 @@ export default function RuletaFeria() {
                 </label>
                 <input
                   type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
                   required
-                  placeholder="+56912345678"
+                  maxLength={15}
+                  placeholder="+56 9 1234 5678"
                   value={form.telefono}
-                  onChange={(e) => setForm({ ...form, telefono: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 text-base"
+                  onChange={(e) =>
+                    setForm({ ...form, telefono: formatearTelefonoCL(e.target.value) })
+                  }
+                  onFocus={() => {
+                    if (!form.telefono) setForm({ ...form, telefono: '+56 9 ' });
+                  }}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 text-base font-medium tracking-wide"
                 />
               </div>
 
