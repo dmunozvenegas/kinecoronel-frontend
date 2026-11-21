@@ -3,8 +3,8 @@ import axios from 'axios';
 import { Gift, Sparkles, CheckCircle2, Phone, User, ShieldCheck, RefreshCw, MessageCircle } from 'lucide-react';
 
 // Reemplaza const API_BASE = ... por esto al inicio de RuletaFeria.jsx y CrmFeria.jsx:
-const RAW_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-const API_BASE = RAW_URL.replace(/\/api\/?$/, ''); // Quita /api si ya venía en el .env
+const RAW_API = import.meta.env.VITE_API_URL || 'https://kinecoronel-backend.onrender.com';
+const API_BASE = RAW_API.replace(/\/api\/?$/, '');
 const WHATSAPP_CENTRO = '56973764805'; // <-- Reemplaza por el WhatsApp real de KineCoronel
 
 const DOLENCIAS = [
